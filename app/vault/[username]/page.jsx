@@ -63,15 +63,20 @@ const VaultPage = () => {
             }
         };
 
-        const rzp = new window.Razorpay(options);
-        rzp.open();
+        if (!window || !window.Razorpay) {
+            alert('Payment gateway is not loaded. Try again later.')
+            return
+        }
+
+        const rzp = new window.Razorpay(options)
+        rzp.open()
     }
 
     if (status === "loading" || loading) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-dark">
-                <div className="w-16 h-16 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
-                <p className="mt-4 text-orange-500 font-bold tracking-widest text-xs animate-pulse">INITIATING VAULT ACCESS...</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-dark px-4">
+                <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin"></div>
+                <p className="mt-4 text-orange-500 font-bold tracking-widest text-xs md:text-sm animate-pulse">INITIATING VAULT ACCESS...</p>
             </div>
         )
     }
@@ -90,11 +95,10 @@ const VaultPage = () => {
     }
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-grid pt-24 pb-16 px-4">
+        <div className="relative min-h-screen overflow-hidden bg-grid pt-20 pb-16 px-4">
             {/* Radial Glow */}
-            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-radial opacity-50 pointe-events-none'></div>
-
-            <div className="container mx-auto max-w-2xl relative z-10">
+            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-radial opacity-50 pointer-events-none'></div>
+            <div className="container mx-auto max-w-3xl relative z-10 px-4">
                 <button onClick={() => router.back()} className='mb-8 text-gray-500 hover:text-white transition-colors flex items-center gap-2 font-mono text-xs uppercase'>
                     ⬅ Back to synchronization
                 </button>
@@ -106,30 +110,30 @@ const VaultPage = () => {
                         <div className='relative group'>
                             <div className='absolute -inset-1 bg-gradient-to-r from-orange-500 to-orange-300 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200'></div>
                             <img
-                                src={creator.profilepic || "/user_icon.png"}
-                                alt={creator.name}
-                                className="relative w-32 h-32 rounded-3xl object-cover border border-white/10"
+                                src={creator?.profilepic || "/user_icon.png"}
+                                alt={creator?.name || creator?.username || "creator"}
+                                className="relative w-24 h-24 md:w-32 md:h-32 rounded-3xl object-cover border border-white/10"
                             />
                         </div>
 
                         <div className='text-center mt-6'>
-                            <h1 className="text-4xl font-black text-gradient tracking-tight">{creator.name}</h1>
+                            <h1 className="text-2xl md:text-4xl font-black text-gradient tracking-tight">{creator?.name || creator?.username || "Creator"}</h1>
                             <div className='flex items-center justify-center gap-2 mt-1'>
                                 <span className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></span>
-                                <p className="text-orange-500/80 font-mono text-sm">@{creator.username}</p>
+                                <p className="text-orange-500/80 font-mono text-sm">@{creator?.username}</p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white/5 border border-white/5 p-8 rounded-3xl mb-8 relative group overflow-hidden">
+                    <div className="bg-white/5 border border-white/5 p-6 md:p-8 rounded-3xl mb-8 relative group overflow-hidden">
                         <div className='absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity'></div>
-                        <p className="relative text-gray-300 text-center text-lg leading-relaxed mb-8">
-                            Initialize a biryani transfer to {creator.name}. Direct support for digital excellence.
+                            <p className="relative text-gray-300 text-center text-lg leading-relaxed mb-8">
+                            Initialize a biryani transfer to {creator?.name || creator?.username || "this creator"}. Direct support for digital excellence.
                         </p>
 
                         <button
                             onClick={() => handlePayment(100)}
-                            className="relative w-full overflow-hidden group bg-orange-600 hover:bg-orange-500 text-white font-black py-5 px-8 rounded-2xl transition-all shadow-xl shadow-orange-900/40 flex items-center justify-center gap-3 active:scale-[0.98]"
+                            className="relative w-full overflow-hidden group bg-orange-600 hover:bg-orange-500 text-white font-black py-4 md:py-5 px-6 md:px-8 rounded-2xl transition-all shadow-xl shadow-orange-900/40 flex items-center justify-center gap-3 active:scale-[0.98]"
                         >
                             <span className='text-2xl group-hover:rotate-12 transition-transform'>🥘</span>
                             <span className='text-xl tracking-tight'>TRANSFERS ₹100</span>

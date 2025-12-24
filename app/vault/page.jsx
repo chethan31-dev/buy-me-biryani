@@ -19,8 +19,8 @@ export default function CreatorVaultPage() {
   // Show loader while session is resolving
   if (status === "loading") {
     return (
-      <div style={{ textAlign: "center", marginTop: "4rem" }}>
-        <h3>Loading creator vault...</h3>
+      <div className="min-h-screen flex items-center justify-center">
+        <h3 className="text-lg">Loading creator vault...</h3>
       </div>
     );
   }
@@ -29,18 +29,22 @@ export default function CreatorVaultPage() {
   if (!session) return null;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Creator Vault</h1>
+    <div className="min-h-screen bg-grid py-12 px-4">
+      <div className="container mx-auto max-w-3xl bg-white/5 glass p-6 rounded-2xl">
+        <h1 className="text-2xl md:text-3xl font-black mb-4">Creator Vault</h1>
 
-      <p>
-        Viewing vault of: <b>{username}</b>
-      </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-sm">
+            Viewing vault of: <b className="font-bold">{username}</b>
+          </p>
 
-      <p>
-        Logged in as: <b>{session.user?.email}</b>
-      </p>
+          <p className="text-sm">
+            Logged in as: <b className="font-bold">{session.user?.email}</b>
+          </p>
+        </div>
 
-      {/* Your vault content / payments UI here */}
+        {/* Your vault content / payments UI here */}
+      </div>
     </div>
   );
 }

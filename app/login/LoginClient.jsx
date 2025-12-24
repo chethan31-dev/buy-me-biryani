@@ -9,6 +9,7 @@ export default function LoginClient() {
   const router = useRouter();
 
   const error = searchParams.get("error");
+  const callbackUrl = searchParams.get("callbackUrl") || "/portal";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,26 +21,20 @@ export default function LoginClient() {
     setLoading(true);
     setLocalError("");
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl: "/portal",
-    });
-
+    // Credentials provider is not configured; guide user to social login.
     setLoading(false);
-
-    if (res?.error) {
-      setLocalError("Invalid email or password");
-    } else if (res?.ok) {
-      router.push("/portal");
-    }
+    setLocalError("Use Google or GitHub to sign in.");
   };
 
+  const handleProviderSignIn = (provider) => {
+    // Redirect to provider sign-in; NextAuth will handle callbackUrl
+    signIn(provider, { callbackUrl });
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow">
-        <h1 className="text-2xl font-bold text-center mb-6">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
+      <div className="w-full max-w-md bg-white p-6 md:p-8 rounded-lg shadow">
+        <h1 className="text-2xl md:text-3xl font-bold text-center mb-6">
           Login to Buy Me Biryani 🍛
         </h1>
 
@@ -49,33 +44,23 @@ export default function LoginClient() {
           </p>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full border px-3 py-2 rounded"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full border px-3 py-2 rounded"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+        <div className="space-y-4">
+          <button
+            onClick={() => handleProviderSignIn('google')}
+            className="w-full bg-red-600 text-white py-3 md:py-4 rounded hover:bg-red-500"
+          >
+            Sign in with Google
+          </button>
 
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 disabled:opacity-50"
+            onClick={() => handleProviderSignIn('github')}
+            className="w-full bg-gray-800 text-white py-3 md:py-4 rounded hover:bg-gray-700"
           >
-            {loading ? "Logging in..." : "Login"}
+            Sign in with GitHub
           </button>
-        </form>
+
+          <div className="text-center text-sm text-gray-500">or use email (not available)</div>
+        </div>
       </div>
     </div>
   );
