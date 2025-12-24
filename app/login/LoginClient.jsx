@@ -1,8 +1,8 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function LoginClient() {
   const searchParams = useSearchParams();
@@ -10,6 +10,15 @@ export default function LoginClient() {
 
   const error = searchParams.get("error");
   const callbackUrl = searchParams.get("callbackUrl") || "/portal";
+
+  const { data: session, status } = useSession();
+
+  // If already authenticated, ensure user goes to portal
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace(callbackUrl);
+    }
+  }, [status, router, callbackUrl]);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,9 +30,17 @@ export default function LoginClient() {
     setLoading(true);
     setLocalError("");
 
-    // Credentials provider is not configured; guide user to social login.
+    // Use credentials provider and let NextAuth redirect to callbackUrl
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: true,
+      callbackUrl,
+    });
+
+    // If signIn doesn't redirect, stop loading and show generic error
     setLoading(false);
-    setLocalError("Use Google or GitHub to sign in.");
+    setLocalError("Unable to sign in. Check credentials and try again.");
   };
 
   const handleProviderSignIn = (provider) => {
